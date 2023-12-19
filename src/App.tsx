@@ -1,24 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, ReactNode, useContext } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Signin } from './pages/Signin';
+import { Chats } from './pages/Chat';
+import { AuthContext } from './contexts/UserProvider';
 
-function App() {
+const App = () => {
+  const {user}:any = useContext(AuthContext);
+  const navigate:any = useNavigate();
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="h-screen">
+      <Routes>
+        <Route path="/" element={
+         <Signin/> 
+        }/>
+        <Route path="/envoy-chats" element={<Chats/>}/>
+      </Routes>
     </div>
   );
 }
