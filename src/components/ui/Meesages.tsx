@@ -83,7 +83,7 @@ export const Messages = ({
                       <>
                         {m.attachment ? (
                           <div className="w-full flex flex-col items-end">
-                            <div className="max-w-[45%] flex flex-col gap-5 items-end">
+                            <div className=" max-w-[90%] md:max-w-[65%] lg:w-[45%] flex flex-col gap-5 items-end">
                               <div ref={scrollRef}>
                                 {m.fileType == "image" ? (
                                   <img
@@ -110,8 +110,8 @@ export const Messages = ({
                           </div>
                         ) : (
                           <div className="w-full flex flex-col my-3 items-end">
-                            <div className="max-w-[45%] ">
-                              <div className=" bg-[#baffc9eb] py-[0.4rem] flex items-end   px-4   rounded-[1.67rem]  rounded-br-none">
+                            <div className="max-w-[90%] lg:max-w-[45%] ">
+                              <div className=" bg-[#baffc9eb] py-[0.4rem] flex items-end  justify-between  px-4   rounded-[1.67rem]  rounded-br-none">
                                 <div
                                   ref={scrollRef}
                                   className="text-[1.05rem] break-all  pr-3 tracking-[-0.011rem]"
@@ -134,21 +134,37 @@ export const Messages = ({
                       <>
                         {m.attachment ? (
                           <div className="w-full flex flex-col my-3 items-start">
-                            <div className="max-w-[45%] flex flex-col gap-1 items-end">
-                              <img
-                                src={m.attachment}
-                                width={250}
-                                height={250}
-                              />
-                              <div className="text-[0.6rem] text-[#4b4b4b]  tracking-[-0.011rem]">
+                            <div className="w-[90%] md:max-w-[65%] object-fit lg:w-[45%] flex flex-col items-start">
+                              <div ref={scrollRef}>
+                                {m.fileType == "image" ? (
+                                  <img
+                                    src={m.attachment}
+                                    className="w-full h-full"
+                                  />
+                                ) : m.fileType == "audio" ? (
+                                  <audio controls>
+                                    <source src={m.attachment} />
+                                  </audio>
+                                ) : m.fileType == "video" ? (
+                                  <video controls>
+                                    <source
+                                      src={m.attachment}
+                                      className="w-full h-full"
+                                    />
+                                  </video>
+                                ) : (
+                                  <div>{m.attachment}</div>
+                                )}
+                              </div>
+                              <div className="text-[0.6rem] md:text-[0.65rem] lgtext-[0.8rem] flex w-full justify-end text-[#4b4b4b] tracking-[-0.011rem]">
                                 {formatDateTime(m.date?.toDate())}
                               </div>
                             </div>
                           </div>
                         ) : (
                           <div className="w-full flex flex-col my-3  items-start">
-                            <div className="max-w-[45%]">
-                              <div className="  bg-[#e4e4e4] flex items-end  px-4 py-[0.4rem] rounded-[1.67rem] rounded-tl-none ">
+                            <div className="max-w-[90%] lg:max-w-[45%]">
+                              <div className="  bg-[#e4e4e4] flex items-end  justify-between px-4 py-[0.4rem] rounded-[1.67rem] rounded-tl-none ">
                                 <div
                                   className="  text-[1.05rem] pr-3  break-all tracking-[-0.011rem] "
                                   key={m.id}

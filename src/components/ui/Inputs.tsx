@@ -15,7 +15,7 @@ export const Inputs = ({
     <div className="w-full">
       {data.us.displayName && (
         <div className="w-full px-3 flex ">
-          <div className="flex w-full gap-4 ">
+          <div className="flex w-full gap-2 md:gap-4 ">
             <div className="w-[90%] resize-none  break-all overflow-y-scroll    rounded-3xl bg-[#fdfdfd] ">
               {previewURL !== "" &&
                 (fileType == "image" ? (
@@ -42,7 +42,7 @@ export const Inputs = ({
                 value={text}
                 onKeyDown={handleKeyDownForSend}
                 onChange={(e) => setText(e.target.value)}
-                className="w-[100%] border-t resize-none  h-full py-1 break-all overflow-y-scroll  px-5 focus:border-0 outline-0"
+                className="w-[100%] border-t resize-none  h-full py-0 md:py-1 break-all overflow-y-scroll px-2 md:px-5 focus:border-0 outline-0"
               ></textarea>
             </div>
             <div className="flex gap-3 justify-center items-center">
@@ -56,7 +56,7 @@ export const Inputs = ({
                 id="file"
               />
               <label htmlFor="file">
-                <div className="bg-[#fff] border cursor-pointer   px-2 py-2  rounded-full">
+                <div className="bg-[#fff] border cursor-pointer   px-1 py-1 md:px-2 md:py-2  rounded-full">
                   <Paperclip
                     fill="#ffaa4f"
                     className="text-[1.1rem] rotate-45"
@@ -66,7 +66,7 @@ export const Inputs = ({
               <div>
                 <div
                   onClick={handleSend}
-                  className="bg-[#fff] cursor-pointer  border px-2 py-2  rounded-full"
+                  className="bg-[#fff] cursor-pointer  border px-1 py-1 md:px-2 md:py-2  rounded-full"
                 >
                   <Send fill="#0e96ffd8" className="text-[1.1rem]" />
                 </div>

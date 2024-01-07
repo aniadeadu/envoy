@@ -56,8 +56,8 @@ export const Chats = () => {
   const [img, setImg]: any = useState<FileList | null | undefined>();
   const [previewURL, setPreviewURL] = useState("");
   const [fileType, setFileType] = useState("");
-  const [userYouHaveNotChattedWith, setUserYouHaveNotChattedWith] =
-    useState<any>();
+  const [usersYouHaveNotChattedWith, setUsersYouHaveNotChattedWith] =
+    useState<any>([]);
   const [msg, setnomessages]: any = useState<any>([]);
   const [date, setDate]: any = useState<any>([]);
   const [messageHead, setMessageHead]: any = useState<string>("");
@@ -207,7 +207,7 @@ export const Chats = () => {
           (user) => !usersYouHaveChattedWith.has(user.uid)
         );
 
-        setUserYouHaveNotChattedWith(usersYouHaveNotChattedWith);
+        setUsersYouHaveNotChattedWith(usersYouHaveNotChattedWith);
       } catch (error) {
         console.error("Error getting users:", error);
       }
@@ -219,7 +219,7 @@ export const Chats = () => {
   // useEffect(() => {
   //   console.log(chats);
   // }, [chats]);
-  console.log(userYouHaveNotChattedWith);
+  console.log(usersYouHaveNotChattedWith);
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "chats", data.chatId), (doc) => {
       doc.exists() && setMessages(doc.data().messages);
@@ -315,10 +315,14 @@ export const Chats = () => {
 
     try {
       const querySnapshot = await getDocs(q);
+      const searchUserList: any[] = [];
       querySnapshot.forEach((doc) => {
-        setUserr(doc.data());
+        searchUserList.push(doc.data());
+
         // console.log(doc.data())
       });
+      console.log(searchUserList);
+      setUserr(searchUserList);
     } catch (err) {}
   };
 
@@ -329,7 +333,7 @@ export const Chats = () => {
     if (e.code === "Enter") return handleSend();
   };
 
-  const handleClick = async () => {
+  const handleClick = async (userr: any) => {
     //check wwhether the group(chats in firestore) exists, othewise create new one
     const combinedId =
       user.uid > userr.uid ? user.uid + userr.uid : userr.uid + user.uid;
@@ -369,6 +373,7 @@ export const Chats = () => {
   };
 
   const handleSelect = (u: any, i: string): void => {
+    setMessages([]);
     dispatch({ type: "CHANGE_USER", payload: u });
     navigate(`/chat/${i}`);
   };
@@ -409,8 +414,8 @@ export const Chats = () => {
   const m = data.us?.displayName ? "block" : "hidden";
 
   return (
-    <div className="w-full relative overflow-x-hidden bg-[#fffff8] py-10 h-screen ">
-      <div className="w-[95%] bg-[#ffffc508] relative z-20 overflow-y-hidden shadow-[0_20px_25px_-10px_rgba(0,0,0,0.15),_15px_0px_30px_-10px_rgba(0,0,0,0.15)] mx-auto flex border h-full  rounded-xl">
+    <div className="w-full relative overflow-x-hidden bg-[#fffff8] lg:py-10 h-screen ">
+      <div className="w-[100%] lg:w-[95%] bg-[#ffffc508] relative z-20 overflow-y-hidden shadow-[0_20px_25px_-10px_rgba(0,0,0,0.15),_15px_0px_30px_-10px_rgba(0,0,0,0.15)] mx-auto flex border h-full  rounded-xl">
         <div className=" px-2 bg-[#ffffc508] flex flex-col py-8 h-full pt-4 pb-2 w-[23.5%]">
           <header>
             <div className="flex justify-between">
@@ -420,7 +425,7 @@ export const Chats = () => {
                   alt="user photo"
                   className="w-9 h-auto rounded-full"
                 />
-                <div className="">
+                <div className="hidden md:block">
                   {user ? user.displayName.split(" ")[0] : navigate("/")}
                 </div>
               </div>
@@ -459,53 +464,144 @@ export const Chats = () => {
               />
             </div>
             {err && <div className="text-black text-xl">User not found</div>}
-            {userr && (
-              <div className="flex gap-3 cursor-pointer" onClick={handleClick}>
-                <img src={userr.photoURL} className="w-10 h-10 rounded-full" />
+            {userr &&
+              userr.map((user: any) => {
+                return (
+                  <div
+                    className="flex mt-7 gap-3 cursor-pointer"
+                    onClick={handleClick}
+                  >
+                    <img
+                      src={user.photoURL}
+                      className="w-10 h-10 rounded-full"
+                    />
 
-                <div className="text-black text-xl">{userr.displayName}</div>
-              </div>
-            )}
-          </div>
-          <div className=" w-full mt-8 rounded-xl overflow-y-scroll  h-full  bg-[#e0e0e099]">
-            {chats.map((chat: any) => {
-              return (
-                <div
-                  className="w-full overflow-x-hidden flex flex-col cursor-pointer"
-                  onClick={() => {
-                    handleSelect(chat.userProfile, chat.userProfile.uid);
-                  }}
-                >
-                  <div className="w-full px-4 items-center justify-between  flex">
-                    <div
-                      className="flex py-4  gap-3 items-center "
-                      key={chat.id}
-                    >
-                      <img
-                        src={chat?.userProfile?.photoURL}
-                        alt="hi"
-                        className="w-12 rounded-full"
-                      />
-                      <div>
-                        <div className="text-[1.05rem] font-medium ">
-                          {chat?.userProfile?.displayName}
-                        </div>
-                        <div className="text-sm text-[rgba(20,20,20,.8)] truncate ">
-                          {chat.messages[chat.messages.length - 1].text}
-                        </div>
+                    <div className="-space-y-1">
+                      <div className="text-black text-sm md:text-base lg:text-xl ">
+                        {user.displayName}
+                      </div>
+                      <div className=" text-xs text-[rgba(100,100,100)]   ">
+                        {user.email}
                       </div>
                     </div>
-                    <div className="text-xs text-[#4b4b4b]  tracking-[-0.011rem]">
-                      {" "}
-                      {formatDateTime(
-                        chat.messages[chat.messages.length - 1].date.toDate()
-                      )}
-                    </div>
                   </div>
-                  <div className="border-b border-[#c9c9c9] w-full h-[0.1rem]" />
+                );
+              })}
+          </div>
+          <div className=" w-full mt-8 rounded-xl overflow-y-scroll  h-full flex flex-col  bg-[#e0e0e099]">
+            <div className="w-full h-full">
+              {chats
+                .slice()
+                .sort((a: any, b: any) => {
+                  const aLastMessageDate =
+                    a.messages.length > 0
+                      ? a.messages[a.messages.length - 1].date
+                      : new Date(0);
+                  const bLastMessageDate =
+                    b.messages.length > 0
+                      ? b.messages[b.messages.length - 1].date
+                      : new Date(0);
+                  return (
+                    b.LastMessageDate.toDate().getTime() -
+                    a.LastMessageDate.toDate().getTime()
+                  );
+                })
+                .map((chat: any) => {
+                  console.log(chat);
+                  return (
+                    <div
+                      className="w-full overflow-x-hidden flex flex-col cursor-pointer"
+                      onClick={() => {
+                        handleSelect(chat.userProfile, chat.userProfile.uid);
+                      }}
+                    >
+                      <div className="w-full px-4 items-center justify-between   flex">
+                        <div
+                          className="flex py-4  w-full gap-3 items-center "
+                          key={chat.id}
+                        >
+                          <div className=" mx-auto md:mx-0 ">
+                            <img
+                              src={chat?.userProfile?.photoURL}
+                              alt="hi"
+                              className="w-12 rounded-full"
+                            />
+                          </div>
+                          <div>
+                            <div className="text-[1.05rem] font-medium hidden md:block">
+                              {chat?.userProfile?.displayName.split(" ")[0]}
+                            </div>
+                            {chat.messages.length > 0 && (
+                              <div className="text-sm text-[rgba(20,20,20,.8)] hidden md:block  truncate ">
+                                {chat.messages[chat.messages.length - 1].text}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {chat.messages.length > 0 && (
+                          <div className="text-xs text-[#4b4b4b]  hidden md:block tracking-[-0.011rem]">
+                            {" "}
+                            {formatDateTime(
+                              chat.messages[
+                                chat.messages.length - 1
+                              ].date.toDate()
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="border-b border-[#c9c9c9] w-full h-[0.1rem]" />
+                    </div>
+                  );
+                })}
+            </div>
+            {usersYouHaveNotChattedWith > 0 && (
+              <div className="w-full px-4 ">
+                <h5 className="text-[0.9rem] font-medium">Suggested Friends</h5>
+                <div className="flex w-full gap-5 overflow-x-scroll">
+                  {usersYouHaveNotChattedWith.map(
+                    (userYouHaveNotChattedWith: any) => {
+                      console.log(userYouHaveNotChattedWith);
+                      return (
+                        <div
+                          className="w-full overflow-x-hidden flex flex-col cursor-pointer"
+                          onClick={() => {
+                            handleClick(userYouHaveNotChattedWith);
+                            // handleSelect(
+                            //   userYouHaveNotChattedWith,
+                            //   userYouHaveNotChattedWith.uid
+                            // );
+                          }}
+                        >
+                          <div className="w-full items-center justify-between  flex">
+                            <div
+                              className="flex py-4 text-sm  gap-3 items-center "
+                              key={userYouHaveNotChattedWith.id}
+                            >
+                              <div className="items-start md:mx-auto w-full">
+                                <img
+                                  src={userYouHaveNotChattedWith?.photoURL}
+                                  alt="hi"
+                                  className="w-8 items-start md:mx-auto rounded-full"
+                                />
+                              </div>
+                              <div>
+                                <div className="text-[1.05rem] font-medium hidden md:block ">
+                                  {
+                                    userYouHaveNotChattedWith?.displayName.split(
+                                      " "
+                                    )[0]
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            )}
           </div>
         </div>
         <div className="w-[77%] relative overflow-y-hidden  bg-transparent h-full px-2 py-2 ">
